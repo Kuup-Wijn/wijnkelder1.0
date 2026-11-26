@@ -13,16 +13,16 @@ function tabs(){document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=
 function init(){addUI();patch();tabs();backups();hist()}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();})();
 
-/* v0.5.2 aperitif contexts */
+/* v0.5.3 aperitif contexts: works without a dish */
 (function(){'use strict';
-function install(){const occ=document.getElementById('occasion'),field=document.getElementById('aperoField'),ctx=document.getElementById('aperoContext'),dish=document.getElementById('dish'),btn=document.getElementById('recommend');if(!occ||!field||!ctx||!dish||!btn)return;const show=()=>field.style.display=occ.value==='Aperitief'?'grid':'none';occ.addEventListener('change',show);show();const old=btn.onclick;btn.onclick=function(e){const raw=dish.value;if(occ.value==='Aperitief'){const extra={
-'Gewoon thuis':' aperitief hapjes veelzijdig',
-'Zonnig / terras':' aperitief zonnig terras fris licht citrus',
-'Picknick':' aperitief picknick charcuterie kaas fris licht',
-'Zomers aperitief':' aperitief zomer terras fris licht citrus',
-'Winters aperitief':' aperitief winter kaas charcuterie warm kruidig',
-'Aperitief met vrienden':' aperitief vrienden charcuterie kaas hapjes veelzijdig',
-'Feest / receptie':' aperitief feest receptie mousserend hapjes'
-}[ctx.value]||' aperitief';dish.value=(raw+' '+extra).trim();}
-try{if(typeof old==='function')old.call(btn,e);else if(typeof window.recommendV04==='function')window.recommendV04()}finally{dish.value=raw}}}
+function install(){const occ=document.getElementById('occasion'),field=document.getElementById('aperoField'),ctx=document.getElementById('aperoContext'),dish=document.getElementById('dish'),btn=document.getElementById('recommend');if(!occ||!field||!ctx||!dish||!btn)return;const show=()=>field.style.display=occ.value==='Aperitief'?'grid':'none';occ.addEventListener('change',show);show();const old=btn.onclick;btn.onclick=function(e){const raw=dish.value;let injected=false;if(occ.value==='Aperitief'){const extra={
+'Gewoon thuis':'aperitief hapjes veelzijdig',
+'Zonnig / terras':'aperitief zonnig terras fris licht citrus',
+'Picknick':'aperitief picknick charcuterie kaas fris licht',
+'Zomers aperitief':'aperitief zomer terras fris licht citrus',
+'Winters aperitief':'aperitief winter kaas charcuterie warm kruidig',
+'Aperitief met vrienden':'aperitief vrienden charcuterie kaas hapjes veelzijdig',
+'Feest / receptie':'aperitief feest receptie mousserend champagne hapjes'
+}[ctx.value]||'aperitief';dish.value=(raw?raw+' ':'')+extra;injected=true;}
+try{if(typeof old==='function')old.call(btn,e);else if(typeof window.recommendV04==='function')window.recommendV04()}finally{if(injected)dish.value=raw}}}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install);else install();})();
