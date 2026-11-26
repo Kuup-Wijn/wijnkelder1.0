@@ -13,16 +13,17 @@ function tabs(){document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=
 function init(){addUI();patch();tabs();backups();hist()}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();})();
 
-/* v0.5.4 aperitif styles - works with empty dish */
+/* v0.5.5 direct aperitif recommender */
 (function(){'use strict';
-function install(){const occ=document.getElementById('occasion'),field=document.getElementById('aperoField'),ctx=document.getElementById('aperoContext'),dish=document.getElementById('dish'),btn=document.getElementById('recommend');if(!occ||!field||!ctx||!dish||!btn)return;const show=()=>field.style.display=occ.value==='Aperitief'?'grid':'none';occ.addEventListener('change',show);show();const old=btn.onclick;btn.onclick=function(e){const raw=dish.value;let injected=false;if(occ.value==='Aperitief'){const extra={
-'Bubbels!':'aperitief feest receptie mousserend champagne bubbels fris hoge zuren licht',
-'Thuis wit - fris':'aperitief thuis witte wijn fris citrus mineraal hoge zuren licht',
-'Thuis wit - vol wit':'aperitief thuis witte wijn vol rijk romig body chardonnay pinot blanc',
-'Thuis rood - fris rood':'aperitief thuis rode wijn fris licht sappig lage tannine pinot noir gamay trousseau',
-'Thuis rood - vol rood':'aperitief thuis rode wijn vol rijk krachtig body rood',
-'Terrasjesweer':'aperitief terras zonnig zomer zeer fris licht citrus hoge zuren mousserend witte wijn',
-'Herfstig':'aperitief herfst kruidig aards voller rood charcuterie kaas paddenstoelen'
-}[ctx.value]||'aperitief';dish.value=(raw?raw+' ':'')+extra;injected=true;}
-try{if(typeof old==='function')old.call(btn,e);else if(typeof window.recommendV04==='function')window.recommendV04()}finally{if(injected)dish.value=raw}}}
+function install(){const occ=document.getElementById('occasion'),field=document.getElementById('aperoField'),ctx=document.getElementById('aperoContext'),dish=document.getElementById('dish'),btn=document.getElementById('recommend'),out=document.getElementById('results'),analysis=document.getElementById('analysis');if(!occ||!field||!ctx||!dish||!btn||!out)return;const show=()=>field.style.display=occ.value==='Aperitief'?'grid':'none';occ.addEventListener('change',show);show();const old=btn.onclick;
+function direct(){const mode=ctx.value, list=(typeof wines!=='undefined'?wines:[]).filter(w=>w.q>0);let scored=list.map(w=>{let s=25,why=[];const c=(w.c||'').toLowerCase(),g=(w.g||'').toLowerCase(),body=w.b||3,acid=w.a||3,tan=w.tn||0,oak=w.o||0,min=w.mineral||3,fruit=w.fruit||3;
+if(mode==='Bubbels!'){if(c.includes('mousserend')){s+=60;why.push('mousserend')}else s-=35;s+=acid*2}
+if(mode==='Wit fris'){if(c==='wit')s+=35;else s-=30;s+=acid*5+min*3-body*3-oak*2;why.push('frisheid en zuren')}
+if(mode==='Wit vol'){if(c==='wit')s+=35;else s-=30;s+=body*5+oak*2+fruit*2+acid*2;if(/chardonnay|pinot blanc|weissburg/i.test(g))s+=10;why.push('body en textuur')}
+if(mode==='Rood fris'){if(c==='rood')s+=35;else s-=30;s+=acid*4+fruit*2+(5-body)*4+(5-tan)*3;if(/pinot noir|gamay|trousseau|ciliegiolo/i.test(g))s+=12;why.push('licht, sappig en weinig tannine')}
+if(mode==='Rood vol'){if(c==='rood')s+=35;else s-=30;s+=body*5+tan*3+fruit*2;if(/mourvedre|nebbiolo|sangiovese|tempranillo|agiorgitiko|garnacha/i.test(g))s+=8;why.push('body en structuur')}
+if(mode==='Terrasjesweer!'){if(c==='wit'||c.includes('mousserend'))s+=30;else if(c==='rood'&&body<=2&&tan<=2)s+=15;else s-=20;s+=acid*6+min*2+(5-body)*3+(5-oak)*2;why.push('maximale frisheid')}
+if(w.sp)s-=5;if(w.t&&w.t<=2028)s+=5;return{w,s,why:why.join(', ')}}).sort((a,b)=>b.s-a.s).slice(0,3);
+analysis.innerHTML='<p class="muted"><strong>Aperitiefprofiel:</strong> '+mode+'</p>';out.innerHTML='<h2>Beste keuzes</h2>'+scored.map((x,i)=>`<div class="card"><strong>${i===0?'Beste match: ':''}${x.w.p} · ${x.w.n} ${x.w.y}</strong><div class="muted">${x.w.c} · ${x.w.g}</div><span class="pill ok">aperitief ${Math.max(1,Math.min(99,Math.round(x.s)))}/100</span><p class="muted">${x.why}. ${x.w.t<=2028?'Deze fles heeft bovendien drinkprioriteit.':'Passend bij het gekozen aperitiefprofiel.'}</p></div>`).join('')}
+btn.onclick=function(e){if(occ.value==='Aperitief'&&!dish.value.trim()){direct();return}if(typeof old==='function')old.call(btn,e);else if(typeof window.recommendV04==='function')window.recommendV04()}}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install);else install();})();
