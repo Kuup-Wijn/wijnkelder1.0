@@ -13,16 +13,16 @@ function tabs(){document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=
 function init(){addUI();patch();tabs();backups();hist()}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();})();
 
-/* v0.5.3 aperitif contexts: works without a dish */
+/* v0.5.4 aperitif styles - works with empty dish */
 (function(){'use strict';
 function install(){const occ=document.getElementById('occasion'),field=document.getElementById('aperoField'),ctx=document.getElementById('aperoContext'),dish=document.getElementById('dish'),btn=document.getElementById('recommend');if(!occ||!field||!ctx||!dish||!btn)return;const show=()=>field.style.display=occ.value==='Aperitief'?'grid':'none';occ.addEventListener('change',show);show();const old=btn.onclick;btn.onclick=function(e){const raw=dish.value;let injected=false;if(occ.value==='Aperitief'){const extra={
-'Gewoon thuis':'aperitief hapjes veelzijdig',
-'Zonnig / terras':'aperitief zonnig terras fris licht citrus',
-'Picknick':'aperitief picknick charcuterie kaas fris licht',
-'Zomers aperitief':'aperitief zomer terras fris licht citrus',
-'Winters aperitief':'aperitief winter kaas charcuterie warm kruidig',
-'Aperitief met vrienden':'aperitief vrienden charcuterie kaas hapjes veelzijdig',
-'Feest / receptie':'aperitief feest receptie mousserend champagne hapjes'
+'Bubbels!':'aperitief feest receptie mousserend champagne bubbels fris hoge zuren licht',
+'Thuis wit - fris':'aperitief thuis witte wijn fris citrus mineraal hoge zuren licht',
+'Thuis wit - vol wit':'aperitief thuis witte wijn vol rijk romig body chardonnay pinot blanc',
+'Thuis rood - fris rood':'aperitief thuis rode wijn fris licht sappig lage tannine pinot noir gamay trousseau',
+'Thuis rood - vol rood':'aperitief thuis rode wijn vol rijk krachtig body rood',
+'Terrasjesweer':'aperitief terras zonnig zomer zeer fris licht citrus hoge zuren mousserend witte wijn',
+'Herfstig':'aperitief herfst kruidig aards voller rood charcuterie kaas paddenstoelen'
 }[ctx.value]||'aperitief';dish.value=(raw?raw+' ':'')+extra;injected=true;}
 try{if(typeof old==='function')old.call(btn,e);else if(typeof window.recommendV04==='function')window.recommendV04()}finally{if(injected)dish.value=raw}}}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install);else install();})();
